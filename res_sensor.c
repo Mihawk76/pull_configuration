@@ -17,7 +17,7 @@ int test (int kwh[])
 	return 0;
 }
 /* function prototypes to define later */
-char *get_config (char* location,uint16_t gateway_id, char* table, char* column_1, char* column_2, char* column_3);
+char *get_config (char* location,uint16_t gateway_id, char* table, int max_column, char* column[]);
 size_t static write_callback_func(void *buffer,
                         size_t size,
                         size_t nmemb,
@@ -33,43 +33,58 @@ size_t static write_callback_func(void *buffer,
 
     printf("%s\n", content);
 }*/
-char *get_config (char* location,uint16_t gateway_id, char* table, char* column_1, char* column_2, char* column_3)
+char *get_config (char* location,uint16_t gateway_id,char* table, int max_column, char* column[])
 {
-		char *response = NULL;
-		snprintf(scoreData, sizeof scoreData, 
-		"{\"id_gateway\": %d,\"table\":\"%s\",\"column\": [\"%s\",\"%s\",\"%s\"]}",
-		gateway_id, table, column_1, column_2, column_3);
-		printf("%s\n", scoreData);
-		  CURL *curl;
-		  CURLcode res; 
-		  curl_global_init(CURL_GLOBAL_ALL);
-		  curl = curl_easy_init();
-		  if(curl) { 
-		     	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
-					struct curl_slist *headers = NULL;
-					headers = curl_slist_append(headers, "Accept: application/json");
-					headers = curl_slist_append(headers, "Content-Type: application/json");
-					headers = curl_slist_append(headers, "charsets: utf-8");
-					curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers); 
-		     	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
-			    curl_easy_setopt(curl, CURLOPT_URL, location);
-    			curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+	char *response = NULL;
+	snprintf(scoreData, sizeof scoreData, 
+	/*"{\"id_gateway\": %d,\"table\":\"%s\",\"column\": [\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]}",
+	gateway_id, table, column_1, column_2, column_3, column_4, column_5, column_6, column_7, column_8, column_9);*/
+	"{\"id_gateway\": %d,\"table\":\"%s\",\"column\": [",
+	gateway_id, table);
+	int n_column = 0;
+  for(n_column=0;n_column<max_column;n_column++)
+  {
+    snprintf(temp, sizeof scoreData, "\"%s\"", 
+    column[n_column]);
+    strcat(scoreData, temp);
+    if(n_column<(max_column-1)){
+    snprintf(temp, sizeof scoreData, ",");
+    strcat(scoreData, temp);
+    }   
+  }
+  snprintf(temp, sizeof scoreData, "]}");
+  strcat(scoreData, temp);
+	printf("%s\n", scoreData);
+	CURL *curl;
+	CURLcode res; 
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+	if(curl) { 
+		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+		struct curl_slist *headers = NULL;
+		headers = curl_slist_append(headers, "Accept: application/json");
+		headers = curl_slist_append(headers, "Content-Type: application/json");
+		headers = curl_slist_append(headers, "charsets: utf-8");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers); 
+		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+		curl_easy_setopt(curl, CURLOPT_URL, location);
+    curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+   	/* follow locations specified by the response header */
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 
-    			/* follow locations specified by the response header */
-    			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, scoreData);
+    /* setting a callback function to return the data */
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_func);
 
-			    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, scoreData);
-    			/* setting a callback function to return the data */
-    			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_func);
-
-    			/* passing the pointer to the response as the callback parameter */
-    			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-			    res = curl_easy_perform(curl);
-			    if(res != CURLE_OK)
-			    fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
-			    curl_easy_cleanup(curl);
-		  	}   
-		  curl_global_cleanup();
+    /* passing the pointer to the response as the callback parameter */
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+		res = curl_easy_perform(curl);
+		if(res != CURLE_OK)
+		  fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+		  curl_easy_cleanup(curl);
+		}   
+	curl_global_cleanup();
+	//printf("%s\n",response);
 	return response;
 }
 /* the function to invoke as the data recieved */
