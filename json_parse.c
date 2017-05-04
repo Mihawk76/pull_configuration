@@ -1,7 +1,7 @@
 #include <json/json.h>
 #include <stdio.h>
 
-const char* config_data[10][10];
+const char* config_data[100][20];
 int arraylen = 0;
  
 void json_parse(char* string, int max_column, char* column[]) {

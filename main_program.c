@@ -14,8 +14,10 @@ int main()
 	//char* location_wattR = "http://35.160.141.229:3000/api/RWatts";
 	//char* location_wattS = "http://35.160.141.229:3000/api/SWatts";
 	//char* location_wattT = "http://35.160.141.229:3000/api/TWatts";
-	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation"};
-	int column_type[] = {0,0,1,1,1,1,0,0,0};
+	//char* column_alarm[] = {"AlarmCode", "value1", "value2", "alarm_message"};
+	char* column_alarm[] = {"AlarmCode", "value1", "value2"};
+	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax"};
+	int column_type[] = {0,0,1,1,1,1,0,0,0,1,1,1,1};
 	// 0 = varchar, 1 = int
 	char* column_1[] = {"ir_name", "channel", "set_default", "brand"};
 	int column_type_1[] = {0,0,1,0};
@@ -36,7 +38,6 @@ int main()
 	//uint16_t gateway = 1002;
 	int n_array = 0;
 	//int channel = 10;
-	//aa
 	//printf("Gateway id is %d\n", gateway_ID);
 	//uint16_t kwh[18];
 	int kwh[18];
@@ -49,7 +50,13 @@ int main()
 		kwh[i]=t;
 		t=t-1;
 	}
-//a	
+	while(1){
+	content = get_config(location_config, 1002, "type_alarm", 2, column_alarm);
+	//json_parse(content, 4, column_alarm);
+ 	printf("%s\n", content);
+	sleep(1);
+	}
+/*
 	content = get_config(location_config, 1002, "ac", 9, column);
  	printf("%s\n", content);
 	json_parse(content, 9, column);
@@ -58,6 +65,10 @@ int main()
   del_config("localhost","root","satunol10","EMS","ac");
 	for(i=0;i<arraylen;i++)
 	{
+		config_data[i][9] = "100";
+		config_data[i][10] = "100";
+		config_data[i][11] = "100";
+		config_data[i][12] = "100";
   	insert_config("localhost","root","satunol10","EMS","ac", column, config_data[i], column_type, n_array);
 	}
 
@@ -96,7 +107,7 @@ int main()
   	insert_config("localhost","root","satunol10","EMS","lamp", column_3, config_data[i], column_type_3, n_array);
 	}
 
-
+*/
   //	
   //trap_th(location, 10, gateway_ID, 1245,1,2,1356,3005,5,6,7);
 	//res_kwh_2 (location, kwh, 4004, 2000, 1003, 4004, 2000, 14, cc1120_TH_ID, channel);*/

@@ -84,7 +84,7 @@ char *get_config (char* location,uint16_t gateway_id,char* table, int max_column
 		  curl_easy_cleanup(curl);
 		}   
 	curl_global_cleanup();
-	//printf("%s\n",response);
+	printf("\n\ntes %s\n",response);
 	return response;
 }
 /* the function to invoke as the data recieved */
