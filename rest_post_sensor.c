@@ -61,30 +61,43 @@ char *get_config (char* location,uint16_t gateway_id,char* table, int max_column
 	curl = curl_easy_init();
 	if(curl) { 
 		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+		char errbuf[CURL_ERROR_SIZE];
 		struct curl_slist *headers = NULL;
 		headers = curl_slist_append(headers, "Accept: application/json");
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 		headers = curl_slist_append(headers, "charsets: utf-8");
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers); 
-		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+		//curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 0);
 		curl_easy_setopt(curl, CURLOPT_URL, location);
+		// provide a buffer to store errors in 
+		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
+		// set the error buffer as empty before performing a request 
+  	errbuf[0] = 0;
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
-   	/* follow locations specified by the response header */
+   	// follow locations specified by the response header 
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, scoreData);
-    /* setting a callback function to return the data */
+    // setting a callback function to return the data 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_func);
 
-    /* passing the pointer to the response as the callback parameter */
+    // passing the pointer to the response as the callback parameter 
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 		res = curl_easy_perform(curl);
 		if(res != CURLE_OK)
-		  fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+		  fprintf(stderr, "\ncurl_easy_perform() failed: %s\n",curl_easy_strerror(res));
 		  curl_easy_cleanup(curl);
+			size_t len = strlen(errbuf);
+    	fprintf(stderr, "\nlibcurl: (%d) ", res);
+    	if(len)
+      	fprintf(stderr, "ini error %s%s", errbuf,
+              ((errbuf[len - 1] != '\n') ? "\n" : ""));
+    	else
+      	fprintf(stderr, "%s\n", curl_easy_strerror(res));
 		}   
 	curl_global_cleanup();
-	printf("\n\ntes %s\n",response);
+	//printf("\n\ntes %s\n",response);
 	return response;
 }
 /* the function to invoke as the data recieved */

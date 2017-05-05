@@ -6,16 +6,26 @@
 #include "json_parse.c"
 #include "mysql_api.c"
 
+typedef struct {
+	int AlarmCode;
+	char* value1;
+	char* value2;
+}ALARM_CONFIG;
+ALARM_CONFIG alarm_config[50];
+
 int main()
 	{
+
 					//char* location = "http://35.160.141.229:3000/api/ths";a
 	//char* location_io = "http://35.166.240.126:3000/api/ios/save";
 	char* location_config = "http://35.166.240.126:3000/api/apps/config";
+	int alarm_value[80][3];
 	//char* location_wattR = "http://35.160.141.229:3000/api/RWatts";
 	//char* location_wattS = "http://35.160.141.229:3000/api/SWatts";
 	//char* location_wattT = "http://35.160.141.229:3000/api/TWatts";
 	//char* column_alarm[] = {"AlarmCode", "value1", "value2", "alarm_message"};
-	char* column_alarm[] = {"AlarmCode", "value1", "value2"};
+	//char* column_alarm[] = {"AlarmCode", "value1", "value2"};
+	char* column_alarm[3][3] = {{"AlarmCode"},{"value1"},{"value2"}};
 	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax"};
 	int column_type[] = {0,0,1,1,1,1,0,0,0,1,1,1,1};
 	// 0 = varchar, 1 = int
@@ -50,13 +60,30 @@ int main()
 		kwh[i]=t;
 		t=t-1;
 	}
-	while(1){
-	content = get_config(location_config, 1002, "type_alarm", 2, column_alarm);
-	//json_parse(content, 4, column_alarm);
- 	printf("%s\n", content);
-	sleep(1);
+	//n_array = (sizeof (column_alarm))/(sizeof (column_alarm[0]));
+	//printf("jumlah column c_a %d\n", n_array);
+	for(i=0;i<3;i++){
+		content = get_config(location_config, 1002, "type_alarm", 1, column_alarm[i]);
+		json_parse(content, 1, column_alarm[i]);
+		int length = 0;
+		for (length=0;length<arraylen;length++){
+			//alarm_value[column_alarm][i] = atoi(config_data[length][0]);
+			alarm_value[length][i] = atoi(config_data[length][0]);
+			if(i==0){
+				alarm_config[length].AlarmCode = atoi(config_data[length][0]);
+			}
+			if(i==1){
+				alarm_config[length].value1 = config_data[length][0];
+			}
+			if(i==2){
+				alarm_config[length].value2 = config_data[length][0];
+			}
+			//printf(" alarm value %d\n",alarm_value[length][i]);
+		}
+ 		printf("%s\n", content);
+		sleep(1);
 	}
-/*
+
 	content = get_config(location_config, 1002, "ac", 9, column);
  	printf("%s\n", content);
 	json_parse(content, 9, column);
@@ -65,13 +92,35 @@ int main()
   del_config("localhost","root","satunol10","EMS","ac");
 	for(i=0;i<arraylen;i++)
 	{
-		config_data[i][9] = "100";
-		config_data[i][10] = "100";
-		config_data[i][11] = "100";
-		config_data[i][12] = "100";
+		int tes = 0;
+		for (tes = 0; tes <= 80; tes++)
+		{
+			if (alarm_value[tes][0] == 210)
+			{	
+				int temp = 0;
+				//config_data[i][9] = alarm_value[tes][1];
+				//config_data[i][10] = alarm_value[tes][2];
+				config_data[i][9] = alarm_config[tes].value1;
+				config_data[i][10] = alarm_config[tes].value2;
+				printf("config temp ketemu\n");
+			}
+			if (alarm_value[tes][0] == 220)
+			{
+				//config_data[i][11] = alarm_value[tes][1];
+				//config_data[i][12] = alarm_value[tes][1];
+				config_data[i][11] = alarm_config[tes].value1;
+				config_data[i][12] = alarm_config[tes].value2;
+				printf("config current ketemu\n");
+			}
+		}
+				//config_data[i][9] = "100";
+				//config_data[i][10] = "100";
+				//config_data[i][11] = "100";			
+				//config_data[i][12] = "100";			
+		//printf("column %s, data %s, column_type %d, array len %d, column[arraylen],
   	insert_config("localhost","root","satunol10","EMS","ac", column, config_data[i], column_type, n_array);
 	}
-
+/*
 	content = get_config(location_config, 1002, "infrared", 4, column_1);
 	json_parse(content, 4, column_1);
  	printf("%s\n", content);
