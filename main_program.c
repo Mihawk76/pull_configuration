@@ -27,14 +27,21 @@ int main()
 	//char* column_alarm[] = {"AlarmCode", "value1", "value2"};
 	char* column_alarm[3][3] = {{"AlarmCode"},{"value1"},{"value2"}};
 	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax"};
+	//tabel ac
 	int column_type[] = {0,0,1,1,1,1,0,0,0,1,1,1,1};
 	// 0 = varchar, 1 = int
 	char* column_1[] = {"ir_name", "channel", "set_default", "brand"};
+	// infrared
 	int column_type_1[] = {0,0,1,0};
 	char* column_2[] = {"temp_name", "th_id", "humidity", "threshold"};
+	//temperature
 	int column_type_2[] = {0,1,1,1};
 	char* column_3[] = {"id_kwh", "phasa", "channel", "start_operation", "end_operation", "lamp_name", "io_id"};
+	//lamp
 	int column_type_3[] = {1,0,1,0,0,0,1};
+	char* column_4[] = {"label", "phase", "channel", "voltMin", "voltMax", "vTimeOut", "currentMin","currentMax","curTimeOut"};
+	//main_power
+	int column_type_4[] = {0,0,1,1,1,1,1,1,1};
 	//char* location = "http://10.42.0.1/chart/post2.php";
 	//char* location = "http://52.43.48.93/post.php";
 	//char* location = "http://192.168.88.19:1616/dcms/rest/alfa";
@@ -60,6 +67,7 @@ int main()
 		kwh[i]=t;
 		t=t-1;
 	}
+	/*
 	//n_array = (sizeof (column_alarm))/(sizeof (column_alarm[0]));
 	//printf("jumlah column c_a %d\n", n_array);
 	for(i=0;i<3;i++){
@@ -120,7 +128,7 @@ int main()
 		//printf("column %s, data %s, column_type %d, array len %d, column[arraylen],
   	insert_config("localhost","root","satunol10","EMS","ac", column, config_data[i], column_type, n_array);
 	}
-/*
+
 	content = get_config(location_config, 1002, "infrared", 4, column_1);
 	json_parse(content, 4, column_1);
  	printf("%s\n", content);
@@ -155,8 +163,17 @@ int main()
 	{
   	insert_config("localhost","root","satunol10","EMS","lamp", column_3, config_data[i], column_type_3, n_array);
 	}
-
 */
+
+	n_array = (sizeof (column_4))/(sizeof (column_4[0]));
+	content = get_config(location_config, 1002, "main_power", n_array, column_4);
+ 	printf("%s\n", content);
+	json_parse(content, n_array, column_4);
+  del_config("localhost","root","satunol10","EMS","main_power");
+	for(i=0;i<arraylen;i++)
+	{
+  	insert_config("localhost","root","satunol10","EMS","main_power", column_4, config_data[i], column_type_4, n_array);
+	}
   //	
   //trap_th(location, 10, gateway_ID, 1245,1,2,1356,3005,5,6,7);
 	//res_kwh_2 (location, kwh, 4004, 2000, 1003, 4004, 2000, 14, cc1120_TH_ID, channel);*/
