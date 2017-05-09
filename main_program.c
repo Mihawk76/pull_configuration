@@ -8,8 +8,8 @@
 
 typedef struct {
 	int AlarmCode;
-	char* value1;
-	char* value2;
+	const char* value1;
+	const char* value2;
 }ALARM_CONFIG;
 ALARM_CONFIG alarm_config[50];
 
@@ -67,7 +67,7 @@ int main()
 		kwh[i]=t;
 		t=t-1;
 	}
-	/*
+	
 	//n_array = (sizeof (column_alarm))/(sizeof (column_alarm[0]));
 	//printf("jumlah column c_a %d\n", n_array);
 	for(i=0;i<3;i++){
@@ -163,7 +163,7 @@ int main()
 	{
   	insert_config("localhost","root","satunol10","EMS","lamp", column_3, config_data[i], column_type_3, n_array);
 	}
-*/
+
 
 	n_array = (sizeof (column_4))/(sizeof (column_4[0]));
 	content = get_config(location_config, 1002, "main_power", n_array, column_4);
