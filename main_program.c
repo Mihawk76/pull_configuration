@@ -62,6 +62,7 @@ int main()
 	int32_t t = 0;
  	char *content = NULL;
 	//printf("%d\n", sizeof kwh);
+  get_id("localhost","root","satunol10","paring","main");
 	for (i=0;i<18;i++)
 	{
 		kwh[i]=t;
@@ -126,7 +127,7 @@ int main()
 				//config_data[i][11] = "100";			
 				//config_data[i][12] = "100";			
 		//printf("column %s, data %s, column_type %d, array len %d, column[arraylen],
-  	insert_config("localhost","root","satunol10","EMS","ac", column, config_data[i], column_type, n_array);
+  	insert_config("localhost","root","satunol10","EMS","ac", column, config_data[i], column_type, n_array, mysql_id);
 	}
 
 	content = get_config(location_config, 1002, "infrared", 4, column_1);
@@ -137,7 +138,7 @@ int main()
   del_config("localhost","root","satunol10","EMS","infrared");
 	for(i=0;i<arraylen;i++)
 	{
-  	insert_config("localhost","root","satunol10","EMS","infrared", column_1, config_data[i], column_type_1, n_array);
+  	insert_config("localhost","root","satunol10","EMS","infrared", column_1, config_data[i], column_type_1, n_array, mysql_id);
 	}
 
 
@@ -149,7 +150,7 @@ int main()
   del_config("localhost","root","satunol10","EMS","temperature");
 	for(i=0;i<arraylen;i++)
 	{
-  	insert_config("localhost","root","satunol10","EMS","temperature", column_2, config_data[i], column_type_2, n_array);
+  	insert_config("localhost","root","satunol10","EMS","temperature", column_2, config_data[i], column_type_2, n_array, mysql_id);
 	}
 
 
@@ -161,7 +162,7 @@ int main()
   del_config("localhost","root","satunol10","EMS","lamp");
 	for(i=0;i<arraylen;i++)
 	{
-  	insert_config("localhost","root","satunol10","EMS","lamp", column_3, config_data[i], column_type_3, n_array);
+  	insert_config("localhost","root","satunol10","EMS","lamp", column_3, config_data[i], column_type_3, n_array, mysql_id);
 	}
 
 
@@ -172,7 +173,7 @@ int main()
   del_config("localhost","root","satunol10","EMS","main_power");
 	for(i=0;i<arraylen;i++)
 	{
-  	insert_config("localhost","root","satunol10","EMS","main_power", column_4, config_data[i], column_type_4, n_array);
+  	insert_config_main_power("localhost","root","satunol10","EMS","main_power", column_4, config_data[i], column_type_4, n_array);
 	}
   //	
   //trap_th(location, 10, gateway_ID, 1245,1,2,1356,3005,5,6,7);
