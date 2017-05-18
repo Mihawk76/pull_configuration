@@ -26,13 +26,13 @@ int main()
 	//char* column_alarm[] = {"AlarmCode", "value1", "value2", "alarm_message"};
 	//char* column_alarm[] = {"AlarmCode", "value1", "value2"};
 	char* column_alarm[3][3] = {{"AlarmCode"},{"value1"},{"value2"}};
-	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax"};
+	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax", "tempTimeOut", "currentTimeOut", "irTimeOut"};
 	//tabel ac
-	int column_type[] = {0,0,1,1,1,1,0,0,0,1,1,1,1};
+	int column_type[] = {0,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1};
 	// 0 = varchar, 1 = int
-	char* column_1[] = {"ir_name", "channel", "set_default", "brand"};
+	char* column_1[] = {"ir_name", "channel", "set_default", "brand", "id_ir"};
 	// infrared
-	int column_type_1[] = {0,0,1,0};
+	int column_type_1[] = {0,0,1,0,1};
 	char* column_2[] = {"temp_name", "th_id", "humidity", "threshold"};
 	//temperature
 	int column_type_2[] = {0,1,1,1};
@@ -104,23 +104,35 @@ int main()
 		int tes = 0;
 		for (tes = 0; tes <= 80; tes++)
 		{
-			if (alarm_value[tes][0] == 210)
+			if (alarm_value[tes][0] == 210)//210 ac temp 
 			{	
 				int temp = 0;
-				//config_data[i][9] = alarm_value[tes][1];
-				//config_data[i][10] = alarm_value[tes][2];
 				config_data[i][9] = alarm_config[tes].value1;
 				config_data[i][10] = alarm_config[tes].value2;
 				printf("config temp ketemu\n");
 			}
-			if (alarm_value[tes][0] == 220)
+			if (alarm_value[tes][0] == 220)//220 ac current
 			{
-				//config_data[i][11] = alarm_value[tes][1];
-				//config_data[i][12] = alarm_value[tes][1];
 				config_data[i][11] = alarm_config[tes].value1;
 				config_data[i][12] = alarm_config[tes].value2;
 				printf("config current ketemu\n");
 			}
+			if (alarm_value[tes][0] == 212)//212 ac temp disconnected
+			{
+				config_data[i][13] = alarm_config[tes].value1;
+				printf("config temp disc ketemu\n");
+			}
+			if (alarm_value[tes][0] == 222)//222 ac current disconnected
+			{
+				config_data[i][14] = alarm_config[tes].value1;
+				printf("config current disc ketemu\n");
+			}
+			if (alarm_value[tes][0] == 201)//220 ac infrared disconnected
+			{
+				config_data[i][15] = alarm_config[tes].value1;
+				printf("config infrared ketemu\n");
+			}
+				//config_data[i][15] = "100";
 		}
 				//config_data[i][9] = "100";
 				//config_data[i][10] = "100";
@@ -130,10 +142,10 @@ int main()
   	insert_config("localhost","root","satunol10","EMS","ac", column, config_data[i], column_type, n_array, mysql_id);
 	}
 
-	content = get_config(location_config, 1002, "infrared", 4, column_1);
-	json_parse(content, 4, column_1);
- 	printf("%s\n", content);
 	n_array = (sizeof (column_1))/(sizeof (column_1[0]));
+	content = get_config(location_config, 1002, "infrared", n_array, column_1);
+	json_parse(content, n_array, column_1);
+ 	printf("%s\n", content);
 	printf("%d\n", n_array);
   del_config("localhost","root","satunol10","EMS","infrared");
 	for(i=0;i<arraylen;i++)
