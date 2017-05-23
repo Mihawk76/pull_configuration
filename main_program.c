@@ -26,6 +26,7 @@ int main()
 	//char* column_alarm[] = {"AlarmCode", "value1", "value2", "alarm_message"};
 	//char* column_alarm[] = {"AlarmCode", "value1", "value2"};
 	char* column_alarm[3][3] = {{"AlarmCode"},{"value1"},{"value2"}};
+	char* column_ac_server[] = {"ac_name", "phasa", "id_temp", "channel", "ir_id", "kwh_id", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax", "tempTimeOut", "currentTimeOut", "irTimeOut"};
 	char* column[] = {"ac_name", "phasa", "id_temp", "channel", "id_ir", "id_kwh", "brand", "start_operation", "end_operation", "tempMin", "tempMax", "currentMin", "currentMax", "tempTimeOut", "currentTimeOut", "irTimeOut"};
 	//tabel ac
 	int column_type[] = {0,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1};
@@ -105,9 +106,9 @@ int main()
 		sleep(1);
 	}
 	//ac
-	content = get_config(location_config, 1002, "ac", 9, column);
+	content = get_config(location_config, 1002, "ac", 9, column_ac_server);
  	printf("%s\n", content);
-	json_parse(content, 9, column);
+	json_parse(content, 9, column_ac_server);
 	n_array = (sizeof (column))/(sizeof (column[0]));
 	printf("%d\n", n_array);
   del_config("localhost","root","satunol10","EMS","ac");
@@ -258,7 +259,7 @@ int main()
 		printf("new io id %s\n",io_id_data[i][0]);
 		if(strcmp(io_id_data[i][0],"0")!=0)
 		{
-  		insert_config("localhost","root","satunol10","EMS","io", column_7, io_id_data[i], column_type_7, 1, mysql_id);
+  		insert_config_io("localhost","root","satunol10","EMS","io", column_7, io_id_data[i], column_type_7, 1, mysql_id);
 		}
 	}
  //	

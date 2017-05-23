@@ -142,6 +142,88 @@ void insert_config_main_power(char* server, char* user ,char* password ,char* db
 	mysql_close(con);
 	//exit(0);
 }
+void insert_config_io(char* server, char* user ,char* password ,char* dbname,char* nm_table, char* column[], const char* data[]
+			, int column_type[], int n_column, int id_location)
+{      
+	MYSQL *con = mysql_init(NULL);
+
+	if (con == NULL) 
+	{
+  	fprintf(stderr, "mysql_init() failed\n");
+  	exit(1);
+  }  
+  
+ 	if (mysql_real_connect(con, server, user, password, 
+  	dbname, 0, NULL, 0) == NULL) 
+  {
+  	finish_with_error(con);
+  }    
+ 	char select[1000];
+ 	char temp[100];
+ 	//snprintf(select,"insert into  %s", nm_table); 
+	snprintf(select, sizeof select, "insert into %s (", nm_table);
+	int i = 0;
+  for(i=0;i<n_column;i++)
+  {
+    snprintf(temp, sizeof temp, "%s", 
+    column[i]);
+    strcat(select, temp);
+    if(i<(n_column-1)){
+    snprintf(temp, sizeof select, ",");
+    strcat(select, temp);
+    }   
+  }
+  snprintf(temp, sizeof temp, ",Gateway_id) values("); 
+  strcat(select, temp);
+  for(i=0;i<n_column;i++)
+  {
+		if(column_type[i] == 0){
+    	snprintf(temp, sizeof temp, "\"%s\"", data[i]);
+    	strcat(select, temp);
+		}
+		if(column_type[i] == 1){
+    	snprintf(temp, sizeof temp, "%s", data[i]);
+    	strcat(select, temp);
+		}
+    if(i<(n_column-1)){
+    snprintf(temp, sizeof select, ",");
+    strcat(select, temp);
+    }   
+  }
+  snprintf(temp, sizeof temp, ",%d)", id_location); 
+  strcat(select, temp);
+	printf("%s\n",select);
+	printf("tes\n");
+ 	if (mysql_query(con,select)) 
+ 	{ 
+  	finish_with_error(con);
+		printf("error\n");
+ 	}
+
+
+ 	//MYSQL_RES *result = mysql_store_result(con);  
+ 	//if (result == NULL) 
+ 	//{
+  //	finish_with_error(con);
+ 	//}
+	printf("after\n");
+	
+	/*int num_fields = mysql_num_fields(result);
+	MYSQL_ROW row;
+	//int i;
+	int a=0;
+	//{
+  	while((row = mysql_fetch_row(result)) != NULL)
+    {	
+			//th_config[a].th_id = atoi(row[0]?row[0]:"NULL");	
+			printf("th id %d\n", atoi(row[0]?row[0]:"NULL"));
+			a++;
+  		printf("\n"); 
+		}
+	*/
+	mysql_close(con);
+	//exit(0);
+}
 void insert_config(char* server, char* user ,char* password ,char* dbname,char* nm_table, char* column[], const char* data[]
 			, int column_type[], int n_column, int id_location)
 {      
